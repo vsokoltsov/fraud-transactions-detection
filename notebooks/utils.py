@@ -1,6 +1,8 @@
 import numpy as np
+import pandas as pd
 from typing import List
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score, fbeta_score
 
 def pr_at_thresholds(thr_list, thresholds, precision, recall):
     pts = []
@@ -31,3 +33,31 @@ def explain_confusion_matrix(matrix, thr):
         f"Missed ~{(mtx_false_negative_rate * 100):.3f}% of fraud transactions"
     ])
     return metrics
+
+def thresholds_grid(y_pred_proba, y_test):
+    """
+    Build thresholds dataframe with scores and confusion matrix results
+    :param y_pred_proba: Vector of model's predictions
+    :param y_test: Vector of expected results
+    """
+
+    grid = np.sort(np.unique(np.round(y_pred_proba, y_test, 3)))
+    rows = []
+
+    for t in sorted(set(grid)):
+        y_hat = (y_pred_proba >= t).astype(int)
+        
+        pr = precision_score(y_test, y_hat, zero_division=0)
+        rc = recall_score(y_test, y_hat, zero_division=0)
+        f1 = f1_score(y_test, y_hat, zero_division=0)
+        f05 = fbeta_score(y_test, y_hat, beta=0.5, zero_division=0)
+        f2 = fbeta_score(y_test, y_hat, beta=2, zero_division=0)
+        
+        tn, fp, fn, tp = confusion_matrix(y_test, y_hat).ravel()
+        
+        rows.append((t, pr, rc, f1, f05, f2, tp, fp, fn, tn))
+
+    return pd.DataFrame(
+        rows,
+        columns=['thr', 'precision', 'recall', 'f1', 'f0.5', 'f2', 'TP', 'FP', 'FN', 'TN']
+    ).sort_values('thr')
