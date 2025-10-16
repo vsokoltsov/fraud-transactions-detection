@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-from typing import List
+import yaml
+from typing import List, Dict
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_score, recall_score, f1_score, fbeta_score
 
@@ -61,3 +62,16 @@ def thresholds_grid(y_pred_proba, y_test):
         rows,
         columns=['thr', 'precision', 'recall', 'f1', 'f0.5', 'f2', 'TP', 'FP', 'FN', 'TN']
     ).sort_values('thr')
+
+def save_features(filename: str, features: List[str]):
+    with open(filename, "w", encoding="utf-8") as f:
+        yaml.dump_all(features, f, allow_unicode=True, sort_keys=False)
+
+def save_dataframes(dfs: Dict[str, pd.DataFrame]):
+    for path, df in dfs.items():
+        df.to_parquet(path, compression='gzip')
+
+def load_features(filename: str) -> List[str]:
+    with open(filename, "w", encoding="utf-8") as f:
+        features = yaml.safe_load_all(f)
+    return features
