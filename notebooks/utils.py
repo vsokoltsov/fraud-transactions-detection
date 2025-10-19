@@ -65,13 +65,16 @@ def thresholds_grid(y_pred_proba, y_test):
 
 def save_features(filename: str, features: List[str]):
     with open(filename, "w", encoding="utf-8") as f:
-        yaml.dump_all(features, f, allow_unicode=True, sort_keys=False)
+        yaml.dump(features, f, allow_unicode=True, sort_keys=False)
 
 def save_dataframes(dfs: Dict[str, pd.DataFrame]):
     for path, df in dfs.items():
         df.to_parquet(path, compression='gzip')
 
 def load_features(filename: str) -> List[str]:
-    with open(filename, "w", encoding="utf-8") as f:
-        features = yaml.safe_load_all(f)
+    features = []
+    with open(filename, "r", encoding="utf-8") as f:
+        lines = yaml.safe_load(f)
+        features.extend(lines)
+
     return features
