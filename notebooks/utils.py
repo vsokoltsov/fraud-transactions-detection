@@ -42,7 +42,7 @@ def thresholds_grid(y_pred_proba, y_test):
     :param y_test: Vector of expected results
     """
 
-    grid = np.sort(np.unique(np.round(y_pred_proba, y_test, 3)))
+    grid = np.sort(np.unique(np.round(y_pred_proba, 3)))
     rows = []
 
     for t in sorted(set(grid)):
