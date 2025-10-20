@@ -2,11 +2,13 @@ import pandas as pd
 import numpy as np
 from typing import List, Optional
 from api.aggregates.transaction import Transaction
+from .protocols import StorageBackend
 
 class CSVStorage:
     def __init__(self, file_path: str):
+        self.file_path = file_path
         self.data = pd.read_csv(
-            file_path,
+            self.file_path,
             parse_dates=['TX_DATETIME'],
             dtype = {'CUSTOMER_ID': np.int64,'SECTOR_ID': np.int64,'TX_FRAUD': np.int8}
         )
@@ -27,4 +29,4 @@ class CSVStorage:
             return None
 
     def get_transactions_for_customer(self, customer_id: int) -> List[Transaction]:
-        pass
+        ...
