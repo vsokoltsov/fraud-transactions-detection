@@ -305,6 +305,15 @@ wheels = [
 ]
 
 [[package]]
+name = "colour"
+version = "0.1.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a0/d4/5911a7618acddc3f594ddf144ecd8a03c29074a540f4494670ad8f153efe/colour-0.1.5.tar.gz", hash = "sha256:af20120fefd2afede8b001fbef2ea9da70ad7d49fafdb6489025dae8745c3aee", size = 24776, upload-time = "2017-11-19T23:20:08.015Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/74/46/e81907704ab203206769dee1385dc77e1407576ff8f50a0681d0a6b541be/colour-0.1.5-py2.py3-none-any.whl", hash = "sha256:33f6db9d564fadc16e59921a56999b79571160ce09916303d35346dddc17978c", size = 23772, upload-time = "2017-11-19T23:20:04.56Z" },
+]
+
+[[package]]
 name = "comm"
 version = "0.2.3"
 source = { registry = "https://pypi.org/simple" }
@@ -428,6 +437,24 @@ wheels = [
 ]
 
 [[package]]
+name = "dtreeviz"
+version = "2.2.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colour" },
+    { name = "graphviz" },
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "pandas" },
+    { name = "pytest" },
+    { name = "scikit-learn" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/09/70/40d3b2ee1a4d68c0cb5c97b23291ce856b9092a097559a3f68504dbed777/dtreeviz-2.2.2.tar.gz", hash = "sha256:a145ff91ffaa11bd2f59186fdcffaa384d90c1757517cbb27e66cc83922319ba", size = 77028, upload-time = "2023-07-13T17:21:22.63Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b3/e8/44eb59345d8ba9d2f6610df6441d63082f46021c1685de24716c22f55383/dtreeviz-2.2.2-py3-none-any.whl", hash = "sha256:e510d80857b29f15a12e8ebe2c7ab3fb667096739742ab47e5d8889cf78da8fe", size = 91776, upload-time = "2023-07-13T17:21:21.303Z" },
+]
+
+[[package]]
 name = "executing"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -500,6 +527,7 @@ name = "fraud-transactions-tech-assignment"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "dtreeviz" },
     { name = "imblearn" },
     { name = "ipykernel" },
     { name = "jupyter" },
@@ -520,6 +548,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dtreeviz", specifier = ">=2.2.2" },
     { name = "imblearn", specifier = ">=0.0" },
     { name = "ipykernel", specifier = ">=6.30.1" },
     { name = "jupyter", specifier = ">=1.1.1" },
@@ -536,6 +565,15 @@ requires-dist = [
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "shap", specifier = ">=0.48.0" },
     { name = "xgboost", specifier = ">=3.0.5" },
+]
+
+[[package]]
+name = "graphviz"
+version = "0.21"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/b3/3ac91e9be6b761a4b30d66ff165e54439dcd48b83f4e20d644867215f6ca/graphviz-0.21.tar.gz", hash = "sha256:20743e7183be82aaaa8ad6c93f8893c923bd6658a04c32ee115edb3c8a835f78", size = 200434, upload-time = "2025-06-15T09:35:05.824Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/91/4c/e0ce1ef95d4000ebc1c11801f9b944fa5910ecc15b5e351865763d8657f8/graphviz-0.21-py3-none-any.whl", hash = "sha256:54f33de9f4f911d7e84e4191749cac8cc5653f815b06738c54db9a15ab8b1e42", size = 47300, upload-time = "2025-06-15T09:35:04.433Z" },
 ]
 
 [[package]]
@@ -643,6 +681,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/32/0a/f83099534a77757abf27427d339590c83cc68c3386690d4741d6454e185f/imblearn-0.0.tar.gz", hash = "sha256:d8fbb662919c1b16f438ad91a8256220e53bcf6815c9ad5502c518b798de34f2", size = 945, upload-time = "2017-01-19T11:52:35.89Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/81/a7/4179e6ebfd654bd0eac0b9c06125b8b4c96a9d0a8ff9e9507eb2a26d2d7e/imblearn-0.0-py2.py3-none-any.whl", hash = "sha256:d42c2d709d22c00d2b9a91e638d57240a8b79b4014122d92181fcd2549a2f79a", size = 1874, upload-time = "2017-01-19T11:52:37.416Z" },
+]
+
+[[package]]
+name = "iniconfig"
+version = "2.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/72/34/14ca021ce8e5dfedc35312d08ba8bf51fdd999c576889fc2c24cb97f4f10/iniconfig-2.3.0.tar.gz", hash = "sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730", size = 20503, upload-time = "2025-10-18T21:55:43.219Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cb/b1/3846dd7f199d53cb17f49cba7e651e9ce294d8497c8c150530ed11865bb8/iniconfig-2.3.0-py3-none-any.whl", hash = "sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12", size = 7484, upload-time = "2025-10-18T21:55:41.639Z" },
 ]
 
 [[package]]
@@ -1675,6 +1722,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pluggy"
+version = "1.6.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
+]
+
+[[package]]
 name = "prometheus-client"
 version = "0.23.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1783,6 +1839,22 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f2/a5/181488fc2b9d093e3972d2a472855aae8a03f000592dbfce716a512b3359/pyparsing-3.2.5.tar.gz", hash = "sha256:2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6", size = 1099274, upload-time = "2025-09-21T04:11:06.277Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/10/5e/1aa9a93198c6b64513c9d7752de7422c06402de6600a8767da1524f9570b/pyparsing-3.2.5-py3-none-any.whl", hash = "sha256:e38a4f02064cf41fe6593d328d0512495ad1f3d8a91c4f73fc401b3079a59a5e", size = 113890, upload-time = "2025-09-21T04:11:04.117Z" },
+]
+
+[[package]]
+name = "pytest"
+version = "8.4.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "iniconfig" },
+    { name = "packaging" },
+    { name = "pluggy" },
+    { name = "pygments" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a3/5c/00a0e072241553e1a7496d638deababa67c5058571567b92a7eaa258397c/pytest-8.4.2.tar.gz", hash = "sha256:86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01", size = 1519618, upload-time = "2025-09-04T14:34:22.711Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a8/a4/20da314d277121d6534b3a980b29035dcd51e6744bd79075a6ce8fa4eb8d/pytest-8.4.2-py3-none-any.whl", hash = "sha256:872f880de3fc3a5bdc88a11b39c9710c3497a547cfa9320bc3c5e62fbf272e79", size = 365750, upload-time = "2025-09-04T14:34:20.226Z" },
 ]
 
 [[package]]
