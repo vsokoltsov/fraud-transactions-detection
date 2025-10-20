@@ -1,7 +1,16 @@
 from datetime import datetime
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
+class Settings(BaseSettings):
+    storage: str
+    storage_path: str
+
+    model_config = SettingsConfigDict(env_file=".env")
+
+settings = Settings()
 api = FastAPI(
     title="Fraud Detection API",
     description="Application for detection fraud transactions",
@@ -15,8 +24,8 @@ class PredictResponse(BaseModel):
     proba: float
     is_fraud: int
 
-@api.post("/predict", response_model=PredictResponse)
-async def predict(req: PredictRequest) -> PredictResponse:
+@api.post("/model/v0/prediction/{trx_id}", response_model=PredictResponse)
+async def predict(trx_id: int, req: PredictRequest) -> PredictResponse:
     """
     Root endpoint that returns a simple JSON response
     """
