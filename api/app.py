@@ -2,15 +2,9 @@ from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from functools import lru_cache
+from .config import settings
 
-class Settings(BaseSettings):
-    storage: str
-    storage_path: str
-
-    model_config = SettingsConfigDict(env_file=".env")
-
-settings = Settings()
 api = FastAPI(
     title="Fraud Detection API",
     description="Application for detection fraud transactions",
