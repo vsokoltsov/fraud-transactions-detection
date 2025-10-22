@@ -29,3 +29,16 @@ tasks:
       ROOT: "{{ ROOT }}"
       DATA: "{{ DATA }}"
       INTERIM_DATA: "{{ INTERIM_DATA }}"
+
+  - name: feature_engineering
+    source: notebooks/03_02_feature_eng_v2.ipynb
+    product:
+      nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/03_02_feature_eng_v2.ipynb"
+      train: "{{ INTERIM_DATA }}/x_train_features_v2.parquet.gzip"
+      val: "{{ INTERIM_DATA }}/x_val_features_v2.parquet.gzip"
+      test: "{{ INTERIM_DATA }}/x_test_features_v2.parquet.gzip"
+    params:
+      ROOT: "{{ ROOT }}"
+      DATA: "{{ DATA }}"
+      INTERIM_DATA: "{{ INTERIM_DATA }}"
+      VERSION: "{{ VERSION }}"
