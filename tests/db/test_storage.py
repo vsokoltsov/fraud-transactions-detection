@@ -66,10 +66,11 @@ class TestStorage:
         """Test that prepare_for_verification delegates to the underlying store."""
         with patch('api.db.storage.CSVStorage', return_value=mock_csv_storage):
             storage = Storage(mock_settings)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
-            result = storage.prepare_for_verification(trx_id=5)
+            result = storage.prepare_for_verification(trx_id=5, features=features)
             
-            mock_csv_storage.prepare_for_verification.assert_called_once_with(trx_id=5)
+            mock_csv_storage.prepare_for_verification.assert_called_once_with(trx_id=5, features=features)
             pd.testing.assert_frame_equal(result, mock_csv_storage.prepare_for_verification.return_value)
 
     def test_prepare_for_verification_with_different_trx_ids(
@@ -80,16 +81,17 @@ class TestStorage:
         """Test prepare_for_verification with different transaction IDs."""
         with patch('api.db.storage.CSVStorage', return_value=mock_csv_storage):
             storage = Storage(mock_settings)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # Test with different transaction IDs
-            storage.prepare_for_verification(0)
-            storage.prepare_for_verification(10)
-            storage.prepare_for_verification(999)
+            storage.prepare_for_verification(0, features)
+            storage.prepare_for_verification(10, features)
+            storage.prepare_for_verification(999, features)
             
             assert mock_csv_storage.prepare_for_verification.call_count == 3
-            mock_csv_storage.prepare_for_verification.assert_any_call(trx_id=0)
-            mock_csv_storage.prepare_for_verification.assert_any_call(trx_id=10)
-            mock_csv_storage.prepare_for_verification.assert_any_call(trx_id=999)
+            mock_csv_storage.prepare_for_verification.assert_any_call(trx_id=0, features=features)
+            mock_csv_storage.prepare_for_verification.assert_any_call(trx_id=10, features=features)
+            mock_csv_storage.prepare_for_verification.assert_any_call(trx_id=999, features=features)
 
     def test_prepare_for_verification_return_type(
         self, 
@@ -99,8 +101,9 @@ class TestStorage:
         """Test that prepare_for_verification returns pandas DataFrame."""
         with patch('api.db.storage.CSVStorage', return_value=mock_csv_storage):
             storage = Storage(mock_settings)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
-            result = storage.prepare_for_verification(trx_id=0)
+            result = storage.prepare_for_verification(trx_id=0, features=features)
             
             assert isinstance(result, pd.DataFrame)
 
@@ -116,10 +119,10 @@ class TestStorage:
             assert hasattr(storage, 'prepare_for_verification')
             assert callable(getattr(storage, 'prepare_for_verification'))
             
-            # Verify method signature matches protocol
+            # Verify method signature matches updated protocol
             import inspect
             sig = inspect.signature(storage.prepare_for_verification)
-            assert list(sig.parameters.keys()) == ['trx_id']
+            assert list(sig.parameters.keys()) == ['trx_id', 'features']
             assert sig.return_annotation == pd.DataFrame
 
     def test_storage_constant_definition(self) -> None:
@@ -158,17 +161,18 @@ class TestStorage:
         """Test error handling when underlying store raises exceptions."""
         with patch('api.db.storage.CSVStorage', return_value=mock_csv_storage):
             storage = Storage(mock_settings)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # Test with various exceptions from underlying store
             mock_csv_storage.prepare_for_verification.side_effect = IndexError("Invalid transaction ID")
             
             with pytest.raises(IndexError, match="Invalid transaction ID"):
-                storage.prepare_for_verification(trx_id=999)
+                storage.prepare_for_verification(trx_id=999, features=features)
             
             mock_csv_storage.prepare_for_verification.side_effect = Exception("Storage error")
             
             with pytest.raises(Exception, match="Storage error"):
-                storage.prepare_for_verification(trx_id=0)
+                storage.prepare_for_verification(trx_id=0, features=features)
 
     def test_storage_initialization_error_handling(self) -> None:
         """Test error handling during storage initialization."""
@@ -289,11 +293,12 @@ class TestStorage:
         """Test prepare_for_verification with None transaction ID."""
         with patch('api.db.storage.CSVStorage', return_value=mock_csv_storage):
             storage = Storage(mock_settings)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # This should pass through to the underlying store
-            storage.prepare_for_verification(trx_id=-1)
+            storage.prepare_for_verification(trx_id=-1, features=features)
             
-            mock_csv_storage.prepare_for_verification.assert_called_once_with(trx_id=-1)
+            mock_csv_storage.prepare_for_verification.assert_called_once_with(trx_id=-1, features=features)
 
     def test_storage_prepare_for_verification_with_negative_trx_id(
         self, 
@@ -303,8 +308,9 @@ class TestStorage:
         """Test prepare_for_verification with negative transaction ID."""
         with patch('api.db.storage.CSVStorage', return_value=mock_csv_storage):
             storage = Storage(mock_settings)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # This should pass through to the underlying store
-            storage.prepare_for_verification(trx_id=-1)
+            storage.prepare_for_verification(trx_id=-1, features=features)
             
-            mock_csv_storage.prepare_for_verification.assert_called_once_with(trx_id=-1)
+            mock_csv_storage.prepare_for_verification.assert_called_once_with(trx_id=-1, features=features)
