@@ -16,5 +16,11 @@ ruff:
 tests-docker:
 	docker-compose run test
 
+up:
+	docker-compose up api
+
+lint:
+	make mypy & make black & make ruff
+
 test:
 	uv run pytest tests/ --cov=api --cov-report=html
