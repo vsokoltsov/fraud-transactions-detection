@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - STORAGE=csv
+      - MODEL=xgboost
+      - VERSION=v2
+      - STORAGE_PATH=/app/data/transactions.csv
+      - FEATURES_PATH=/app/data/interim/features_v2.yaml
+      - MODELS_PATH=/app/data/models
+      - THRESHOLDS_PATH=/app/data/models/thresholds.yaml
+    volumes:
+      # Mount data directory for development (optional)
+      - ./data:/app/data:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - STORAGE=csv
+      - MODEL=xgboost
+      - VERSION=v2
+      - STORAGE_PATH=/app/data/transactions.csv
+      - FEATURES_PATH=/app/data/interim/features_v2.yaml
+      - MODELS_PATH=/app/data/models
+      - THRESHOLDS_PATH=/app/data/models/thresholds.yaml
+    volumes:
+      # Mount data directory for development (optional)
+      - ./data:/app/data:ro
+    command: ["uv", "run", "pytest", "tests/", "--cov=api"]
+    

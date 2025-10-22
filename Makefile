@@ -12,3 +12,9 @@ black-fix:
 
 ruff:
 	ruff check api/ tests/ --fix
+
+tests-docker:
+	docker-compose run test
+
+test:
+	uv run pytest tests/ --cov=api --cov-report=html
