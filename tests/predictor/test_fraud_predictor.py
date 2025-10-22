@@ -18,7 +18,7 @@ class TestFraudPredictor:
         """Create a mock Settings object for testing."""
         settings = Mock(spec=Settings)
         settings.model = LINEAR_REGRESSION
-        settings.model_path = "/fake/path"
+        settings.models_path = "/fake/path"
         return settings
 
     @pytest.fixture
@@ -50,7 +50,7 @@ class TestFraudPredictor:
             assert predictor.settings == mock_settings
             assert predictor.model == mock_model
             mock_load.assert_called_once_with(
-                os.path.join(mock_settings.model_path, f"{mock_settings.model}.pkl")
+                os.path.join(mock_settings.models_path, f"{mock_settings.model}.pkl")
             )
 
     def test_init_random_forest(self, mock_settings: Mock) -> None:
@@ -66,7 +66,7 @@ class TestFraudPredictor:
             assert predictor.settings == mock_settings
             assert predictor.model == mock_model
             mock_load.assert_called_once_with(
-                os.path.join(mock_settings.model_path, f"{mock_settings.model}.pkl")
+                os.path.join(mock_settings.models_path, f"{mock_settings.model}.pkl")
             )
 
     def test_init_xgboost(self, mock_settings: Mock) -> None:
@@ -83,7 +83,7 @@ class TestFraudPredictor:
             assert predictor.model == mock_model
             mock_xgb_class.assert_called_once()
             mock_model.load_model.assert_called_once_with(
-                os.path.join(mock_settings.model_path, f"{mock_settings.model}.json")
+                os.path.join(mock_settings.models_path, f"{mock_settings.model}.json")
             )
 
     def test_init_unknown_model(self, mock_settings: Mock) -> None:
@@ -167,7 +167,7 @@ class TestFraudPredictor:
     def test_model_path_construction(self, mock_settings: Mock) -> None:
         """Test that model paths are constructed correctly."""
         mock_settings.model = LINEAR_REGRESSION
-        mock_settings.model_path = "/test/models"
+        mock_settings.models_path = "/test/models"
         
         with patch('joblib.load') as mock_load:
             FraudPredictor(mock_settings)
@@ -177,7 +177,7 @@ class TestFraudPredictor:
     def test_xgboost_model_path_construction(self, mock_settings: Mock) -> None:
         """Test that XGBoost model paths are constructed correctly."""
         mock_settings.model = XGBOOST
-        mock_settings.model_path = "/test/models"
+        mock_settings.models_path = "/test/models"
         
         with patch('xgboost.XGBClassifier') as mock_xgb_class:
             mock_model = Mock()
