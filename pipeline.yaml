@@ -1,8 +1,18 @@
 tasks:
-  - source: notebooks/01_init.ipynb
+  - name: init
+    source: notebooks/01_init.ipynb
     product:
       nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/01_init.ipynb"
       data: "{{ INTERIM_DATA }}/transactions.parquet.gzip"
+    params:
+      ROOT: "{{ ROOT }}"
+      DATA: "{{ DATA }}"
+      INTERIM_DATA: "{{ INTERIM_DATA }}"
+
+  - name: eda
+    source: notebooks/02_eda_v2.ipynb
+    product:
+      nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/02_eda_v2.ipynb"
     params:
       ROOT: "{{ ROOT }}"
       DATA: "{{ DATA }}"
