@@ -1,0 +1,9 @@
+tasks:
+  - source: notebooks/01_init.ipynb
+    product:
+      nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/01_init.ipynb"
+      data: "{{ INTERIM_DATA }}/transactions.parquet.gzip"
+    params:
+      ROOT: "{{ ROOT }}"
+      DATA: "{{ DATA }}"
+      INTERIM_DATA: "{{ INTERIM_DATA }}"
