@@ -4,3 +4,7 @@ data/models
 __pycache__/
 .DS_Store
 .env
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
