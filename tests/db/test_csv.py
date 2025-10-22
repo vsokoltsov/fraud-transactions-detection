@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import Mock, patch, MagicMock
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from pathlib import Path
 
 from api.db.csv import CSVStorage
@@ -118,8 +118,17 @@ class TestCSVStorage:
             })
             mock_read_csv.return_value = mock_df
             
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001, 1001],
+                'tx_amount_log': [5.0, 4.3],
+                'tx_amount_log_deviates': [0, 1],
+                'row_id': [0, 1]
+            })
+            
             storage = CSVStorage(sample_csv_file)
-            result = storage.prepare_for_verification(0)  # First transaction (customer_id: 1001)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
+            result = storage.prepare_for_verification(0, features)  # First transaction (customer_id: 1001)
             
             # Verify generate_features was called with correct user transactions
             mock_generate_features.assert_called_once()
@@ -127,9 +136,12 @@ class TestCSVStorage:
             assert len(called_df) == 2  # Two transactions for customer 1001
             assert called_df['customer_id'].iloc[0] == 1001
             assert called_df['customer_id'].iloc[1] == 1001
+            assert 'row_id' in called_df.columns  # Verify row_id was added
             
-            # Verify result is the output of generate_features
-            pd.testing.assert_frame_equal(result, mock_generate_features.return_value)
+            # Verify result contains only the specified features for the correct row
+            assert result is not None
+            assert list(result.columns) == features
+            assert len(result) == 1  # Only one row (the requested transaction)
 
     def test_prepare_for_verification_with_different_trx_id(
         self, 
@@ -149,13 +161,24 @@ class TestCSVStorage:
             })
             mock_read_csv.return_value = mock_df
             
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1002, 1002],
+                'tx_amount_log': [4.3, 5.3],
+                'tx_amount_log_deviates': [0, 1],
+                'row_id': [1, 2]
+            })
+            
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # Test with transaction ID 1 (customer_id: 1002)
-            storage.prepare_for_verification(1)
+            result = storage.prepare_for_verification(1, features)
             called_df = mock_generate_features.call_args[0][0]
             assert len(called_df) == 2  # Two transactions for customer 1002
             assert all(called_df['customer_id'] == 1002)
+            assert result is not None
+            assert list(result.columns) == features
 
     def test_prepare_for_verification_single_customer_transaction(
         self, 
@@ -175,13 +198,24 @@ class TestCSVStorage:
             })
             mock_read_csv.return_value = mock_df
             
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1002],
+                'tx_amount_log': [4.3],
+                'tx_amount_log_deviates': [0],
+                'row_id': [1]
+            })
+            
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # Test with transaction ID 1 (customer_id: 1002, single transaction)
-            storage.prepare_for_verification(1)
+            result = storage.prepare_for_verification(1, features)
             called_df = mock_generate_features.call_args[0][0]
             assert len(called_df) == 1
             assert called_df['customer_id'].iloc[0] == 1002
+            assert result is not None
+            assert list(result.columns) == features
 
     def test_prepare_for_verification_invalid_trx_id(self, sample_csv_file: str) -> None:
         """Test prepare_for_verification with invalid transaction ID."""
@@ -196,13 +230,17 @@ class TestCSVStorage:
             mock_read_csv.return_value = mock_df
             
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log']
             
-            with pytest.raises(IndexError):
-                storage.prepare_for_verification(5)  # Invalid index
+            # Should return None for invalid transaction ID
+            result = storage.prepare_for_verification(5, features)  # Invalid index
+            assert result is None
 
-    def test_prepare_for_verification_negative_trx_id(self, sample_csv_file: str) -> None:
+    def test_prepare_for_verification_negative_trx_id(self, sample_csv_file: str, mock_generate_features: Mock) -> None:
         """Test prepare_for_verification with negative transaction ID."""
-        with patch('pandas.read_csv') as mock_read_csv:
+        with patch('pandas.read_csv') as mock_read_csv, \
+             patch('api.db.csv.generate_features', mock_generate_features):
+            
             mock_df = pd.DataFrame({
                 'TX_DATETIME': pd.to_datetime(['2023-01-01 10:00:00']),
                 'CUSTOMER_ID': [1001],
@@ -212,13 +250,24 @@ class TestCSVStorage:
             })
             mock_read_csv.return_value = mock_df
             
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001],
+                'tx_amount_log': [5.0],
+                'tx_amount_log_deviates': [0],
+                'row_id': [0]
+            })
+            
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # Negative index wraps around in pandas, so -1 becomes the last row
             # This should not raise an error, but should return the last transaction
-            result = storage.prepare_for_verification(-1)
-            # Verify it returns a DataFrame (the actual behavior)
+            result = storage.prepare_for_verification(-1, features)
+            # Verify it returns a DataFrame with the correct features
+            assert result is not None
             assert isinstance(result, pd.DataFrame)
+            assert list(result.columns) == features
 
     def test_csv_loading_error_handling(self, tmp_path: Path) -> None:
         """Test handling of CSV loading errors."""
@@ -302,9 +351,10 @@ class TestCSVStorage:
             mock_generate_features.side_effect = Exception("Feature generation failed")
             
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log']
             
             with pytest.raises(Exception, match="Feature generation failed"):
-                storage.prepare_for_verification(0)
+                storage.prepare_for_verification(0, features)
 
     def test_empty_dataframe_handling(self, sample_csv_file: str) -> None:
         """Test handling of empty DataFrame."""
@@ -316,9 +366,11 @@ class TestCSVStorage:
             mock_generate_features.return_value = pd.DataFrame()
             
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log']
             
-            with pytest.raises(IndexError):
-                storage.prepare_for_verification(0)
+            # Should return None for empty DataFrame
+            result = storage.prepare_for_verification(0, features)
+            assert result is None
 
     def test_storage_backend_protocol_compliance(self, sample_csv_file: str) -> None:
         """Test that CSVStorage implements StorageBackend protocol correctly."""
@@ -341,11 +393,11 @@ class TestCSVStorage:
             assert hasattr(storage, 'prepare_for_verification')
             assert callable(getattr(storage, 'prepare_for_verification'))
             
-            # Verify method signature matches protocol
+            # Verify method signature matches updated protocol
             import inspect
             sig = inspect.signature(storage.prepare_for_verification)
-            assert list(sig.parameters.keys()) == ['trx_id']
-            assert sig.return_annotation == pd.DataFrame
+            assert list(sig.parameters.keys()) == ['trx_id', 'features']
+            assert sig.return_annotation == Optional[pd.DataFrame]
 
     def test_multiple_customers_data_handling(
         self, 
@@ -368,25 +420,50 @@ class TestCSVStorage:
             })
             mock_read_csv.return_value = mock_df
             
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001, 1001],
+                'tx_amount_log': [5.0, 4.3],
+                'tx_amount_log_deviates': [0, 1],
+                'row_id': [0, 1]
+            })
+            
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # Test with customer 1001 (2 transactions)
-            storage.prepare_for_verification(0)
+            result = storage.prepare_for_verification(0, features)
             called_df = mock_generate_features.call_args[0][0]
             assert len(called_df) == 2
             assert all(called_df['customer_id'] == 1001)
+            assert result is not None
+            assert list(result.columns) == features
             
             # Test with customer 1002 (2 transactions)
-            storage.prepare_for_verification(2)
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1002, 1002],
+                'tx_amount_log': [5.3, 4.6],
+                'tx_amount_log_deviates': [1, 0],
+                'row_id': [2, 3]
+            })
+            result = storage.prepare_for_verification(2, features)
             called_df = mock_generate_features.call_args[0][0]
             assert len(called_df) == 2
             assert all(called_df['customer_id'] == 1002)
+            assert result is not None
             
             # Test with customer 1003 (1 transaction)
-            storage.prepare_for_verification(4)
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1003],
+                'tx_amount_log': [3.9],
+                'tx_amount_log_deviates': [0],
+                'row_id': [4]
+            })
+            result = storage.prepare_for_verification(4, features)
             called_df = mock_generate_features.call_args[0][0]
             assert len(called_df) == 1
             assert all(called_df['customer_id'] == 1003)
+            assert result is not None
 
     def test_file_path_storage(self, sample_csv_file: str) -> None:
         """Test that file_path is stored correctly."""
@@ -426,10 +503,21 @@ class TestCSVStorage:
             })
             mock_read_csv.return_value = mock_df
             
-            storage = CSVStorage(sample_csv_file)
-            result = storage.prepare_for_verification(0)
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001],
+                'tx_amount_log': [5.0],
+                'tx_amount_log_deviates': [0],
+                'row_id': [0]
+            })
             
+            storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
+            result = storage.prepare_for_verification(0, features)
+            
+            assert result is not None
             assert isinstance(result, pd.DataFrame)
+            assert list(result.columns) == features
 
     def test_iloc_access_behavior(self, sample_csv_file: str) -> None:
         """Test that iloc access works correctly for transaction selection."""
@@ -470,10 +558,162 @@ class TestCSVStorage:
             })
             mock_read_csv.return_value = mock_df
             
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001, 1001],
+                'tx_amount_log': [5.0, 5.3],
+                'tx_amount_log_deviates': [0, 1],
+                'row_id': [0, 1]
+            })
+            
             storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
             
             # Test filtering for customer 1001
-            storage.prepare_for_verification(0)  # First transaction (customer 1001)
+            result = storage.prepare_for_verification(0, features)  # First transaction (customer 1001)
             called_df = mock_generate_features.call_args[0][0]
             assert all(called_df['customer_id'] == 1001)
             assert len(called_df) == 2  # Two transactions for customer 1001
+            assert result is not None
+            assert list(result.columns) == features
+
+    def test_prepare_for_verification_with_empty_features_list(
+        self, 
+        sample_csv_file: str, 
+        mock_generate_features: Mock
+    ) -> None:
+        """Test prepare_for_verification with empty features list."""
+        with patch('pandas.read_csv') as mock_read_csv, \
+             patch('api.db.csv.generate_features', mock_generate_features):
+            
+            mock_df = pd.DataFrame({
+                'TX_DATETIME': pd.to_datetime(['2023-01-01 10:00:00']),
+                'CUSTOMER_ID': [1001],
+                'SECTOR_ID': [1],
+                'TX_AMOUNT': [150.50],
+                'TX_FRAUD': [0]
+            })
+            mock_read_csv.return_value = mock_df
+            
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001],
+                'tx_amount_log': [5.0],
+                'tx_amount_log_deviates': [0],
+                'row_id': [0]
+            })
+            
+            storage = CSVStorage(sample_csv_file)
+            features: List[str] = []  # Empty features list
+            
+            result = storage.prepare_for_verification(0, features)
+            
+            assert result is not None
+            assert list(result.columns) == features
+            assert len(result) == 1
+
+    def test_prepare_for_verification_with_nonexistent_features(
+        self, 
+        sample_csv_file: str, 
+        mock_generate_features: Mock
+    ) -> None:
+        """Test prepare_for_verification when requested features don't exist in generated data."""
+        with patch('pandas.read_csv') as mock_read_csv, \
+             patch('api.db.csv.generate_features', mock_generate_features):
+            
+            mock_df = pd.DataFrame({
+                'TX_DATETIME': pd.to_datetime(['2023-01-01 10:00:00']),
+                'CUSTOMER_ID': [1001],
+                'SECTOR_ID': [1],
+                'TX_AMOUNT': [150.50],
+                'TX_FRAUD': [0]
+            })
+            mock_read_csv.return_value = mock_df
+            
+            # Mock generate_features to return data with row_id but without requested features
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001],
+                'tx_amount_log': [5.0],
+                'tx_amount_log_deviates': [0],
+                'row_id': [0]
+            })
+            
+            storage = CSVStorage(sample_csv_file)
+            features = ['nonexistent_feature']  # Feature that doesn't exist
+            
+            result = storage.prepare_for_verification(0, features)
+            assert result is None
+
+    def test_prepare_for_verification_row_id_filtering(
+        self, 
+        sample_csv_file: str, 
+        mock_generate_features: Mock
+    ) -> None:
+        """Test that prepare_for_verification correctly filters by row_id."""
+        with patch('pandas.read_csv') as mock_read_csv, \
+             patch('api.db.csv.generate_features', mock_generate_features):
+            
+            mock_df = pd.DataFrame({
+                'TX_DATETIME': pd.to_datetime(['2023-01-01 10:00:00', '2023-01-01 11:00:00']),
+                'CUSTOMER_ID': [1001, 1001],
+                'SECTOR_ID': [1, 1],
+                'TX_AMOUNT': [150.50, 200.00],
+                'TX_FRAUD': [0, 0]
+            })
+            mock_read_csv.return_value = mock_df
+            
+            # Mock generate_features to return data with row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001, 1001],
+                'tx_amount_log': [5.0, 5.3],
+                'tx_amount_log_deviates': [0, 1],
+                'row_id': [0, 1]
+            })
+            
+            storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log', 'tx_amount_log_deviates']
+            
+            # Test with first transaction (row_id=0)
+            result = storage.prepare_for_verification(0, features)
+            assert result is not None
+            assert len(result) == 1
+            assert result.iloc[0]['tx_amount_log'] == 5.0
+            
+            # Test with second transaction (row_id=1)
+            result = storage.prepare_for_verification(1, features)
+            assert result is not None
+            assert len(result) == 1
+            assert result.iloc[0]['tx_amount_log'] == 5.3
+
+    def test_prepare_for_verification_missing_row_id_returns_none(
+        self, 
+        sample_csv_file: str, 
+        mock_generate_features: Mock
+    ) -> None:
+        """Test that prepare_for_verification returns None when row_id is not found."""
+        with patch('pandas.read_csv') as mock_read_csv, \
+             patch('api.db.csv.generate_features', mock_generate_features):
+            
+            mock_df = pd.DataFrame({
+                'TX_DATETIME': pd.to_datetime(['2023-01-01 10:00:00']),
+                'CUSTOMER_ID': [1001],
+                'SECTOR_ID': [1],
+                'TX_AMOUNT': [150.50],
+                'TX_FRAUD': [0]
+            })
+            mock_read_csv.return_value = mock_df
+            
+            # Mock generate_features to return data with different row_id
+            mock_generate_features.return_value = pd.DataFrame({
+                'customer_id': [1001],
+                'tx_amount_log': [5.0],
+                'tx_amount_log_deviates': [0],
+                'row_id': [999]  # Different row_id than requested
+            })
+            
+            storage = CSVStorage(sample_csv_file)
+            features = ['tx_amount_log']
+            
+            # Should return None when row_id is not found
+            result = storage.prepare_for_verification(2, features)
+            assert result is None
