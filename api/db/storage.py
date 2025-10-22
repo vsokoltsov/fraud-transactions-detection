@@ -6,11 +6,14 @@ from .protocols import StorageBackend
 
 STORAGE_CSV = "csv"
 
-class Storage:
+
+class Storage(StorageBackend):
     def __init__(self, settings: Settings):
         self.store: StorageBackend = self._storage(settings=settings)
 
-    def prepare_for_verification(self, trx_id: int, features: List[str]) -> pd.DataFrame:
+    def prepare_for_verification(
+        self, trx_id: int, features: List[str]
+    ) -> pd.DataFrame:
         return self.store.prepare_for_verification(trx_id=trx_id, features=features)
 
     def _storage(self, settings: Settings) -> StorageBackend:

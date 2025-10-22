@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import ClassVar
 
+
 class Settings(BaseSettings):
     storage: str
     model: str
@@ -12,4 +13,5 @@ class Settings(BaseSettings):
 
     model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(env_file=".env")
 
-settings = Settings() # type: ignore
+
+settings = Settings()  # type: ignore

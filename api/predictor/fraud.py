@@ -1,13 +1,13 @@
 from typing import Union, List, Dict
 import os
 import numpy as np
+import pandas as pd
 import numpy.typing as npt
 from api.config import Settings
 import joblib
 import xgboost
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from api.types import DataFrame
 import yaml
 
 LINEAR_REGRESSION = "linear_regression"
@@ -23,11 +23,10 @@ class FraudPredictor:
         ] = self._init_model()
         self.features = self._load_features()
         self.threshold = self._threshold_for_model(
-            os.path.join(self.settings.models_path, 'thresholds.yaml')
+            os.path.join(self.settings.models_path, "thresholds.yaml")
         )
 
-
-    def predict_proba(self, df: DataFrame) -> npt.NDArray[np.float64]:
+    def predict_proba(self, df: pd.DataFrame) -> npt.NDArray[np.float64]:
         """
         Calculate probability of given transaction to be fraud
 
@@ -88,6 +87,7 @@ class FraudPredictor:
         thresholds = self._load_model_thresholds(thresholds_path)
         threshold = thresholds.get(self.settings.model)
         if not threshold:
-            raise ValueError(f"There is no threshold for model '{self.settings.model}' in {thresholds_path}")
+            raise ValueError(
+                f"There is no threshold for model '{self.settings.model}' in {thresholds_path}"
+            )
         return float(threshold)
-
