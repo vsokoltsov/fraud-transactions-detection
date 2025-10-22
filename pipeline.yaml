@@ -17,3 +17,15 @@ tasks:
       ROOT: "{{ ROOT }}"
       DATA: "{{ DATA }}"
       INTERIM_DATA: "{{ INTERIM_DATA }}"
+
+  - name: split_data
+    source: notebooks/03_01_split_data.ipynb
+    product:
+      nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/03_01_split_data.ipynb"
+      train: "{{ INTERIM_DATA }}/x_train_split.parquet.gzip"
+      val: "{{ INTERIM_DATA }}/x_val_split.parquet.gzip"
+      test: "{{ INTERIM_DATA }}/x_test_split.parquet.gzip"
+    params:
+      ROOT: "{{ ROOT }}"
+      DATA: "{{ DATA }}"
+      INTERIM_DATA: "{{ INTERIM_DATA }}"
