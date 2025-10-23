@@ -11,3 +11,5 @@ __pycache__/
 htmlcov/
 .ipynb_checkpoints/
 notebooks/output/
+.Trash-1000/
+.virtual_documents/
