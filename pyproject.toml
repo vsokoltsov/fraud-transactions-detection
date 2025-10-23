@@ -28,14 +28,18 @@ dev = [
     "black>=25.9.0",
     "httpx>=0.28.1",
     "mypy>=1.18.2",
-    "ploomber>=0.23.3",
-    "ploomber-engine>=0.0.33",
+    "nbformat>=5.10.4",
     "pytest>=8.4.2",
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
     "pytest-mock>=3.15.1",
     "ruff>=0.14.1",
     "types-pyyaml>=6.0.12.20250915",
+]
+
+ploomber = [
+    "ploomber>=0.23.3",
+    "ploomber-engine>=0.0.33",
 ]
 
 ml = [

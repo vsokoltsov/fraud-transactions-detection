@@ -850,8 +850,7 @@ dev = [
     { name = "black" },
     { name = "httpx" },
     { name = "mypy" },
-    { name = "ploomber" },
-    { name = "ploomber-engine" },
+    { name = "nbformat" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
@@ -873,6 +872,10 @@ ml = [
     { name = "pyarrow" },
     { name = "seaborn" },
     { name = "shap" },
+]
+ploomber = [
+    { name = "ploomber" },
+    { name = "ploomber-engine" },
 ]
 
 [package.metadata]
@@ -899,8 +902,7 @@ dev = [
     { name = "black", specifier = ">=25.9.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "mypy", specifier = ">=1.18.2" },
-    { name = "ploomber", specifier = ">=0.23.3" },
-    { name = "ploomber-engine", specifier = ">=0.0.33" },
+    { name = "nbformat", specifier = ">=5.10.4" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "pytest-asyncio", specifier = ">=1.2.0" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
@@ -922,6 +924,10 @@ ml = [
     { name = "pyarrow", specifier = ">=21.0.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "shap", specifier = ">=0.48.0" },
+]
+ploomber = [
+    { name = "ploomber", specifier = ">=0.23.3" },
+    { name = "ploomber-engine", specifier = ">=0.0.33" },
 ]
 
 [[package]]
