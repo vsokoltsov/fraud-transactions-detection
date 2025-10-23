@@ -8,7 +8,6 @@ tasks:
       ROOT: "{{ ROOT }}"
       DATA: "{{ DATA }}"
       INTERIM_DATA: "{{ INTERIM_DATA }}"
-
   - name: eda
     source: notebooks/02_eda_v2.ipynb
     product:
@@ -37,6 +36,39 @@ tasks:
       train: "{{ INTERIM_DATA }}/x_train_features_v2.parquet.gzip"
       val: "{{ INTERIM_DATA }}/x_val_features_v2.parquet.gzip"
       test: "{{ INTERIM_DATA }}/x_test_features_v2.parquet.gzip"
+    params:
+      ROOT: "{{ ROOT }}"
+      DATA: "{{ DATA }}"
+      INTERIM_DATA: "{{ INTERIM_DATA }}"
+      VERSION: "{{ VERSION }}"
+
+  - name: train_logistic_regression
+    source: notebooks/04_01_model_logreg.ipynb
+    product:
+      nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/04_01_model_logreg.ipynb"
+      logistic_regression_model: "{{ MODELS_PATH }}/logistic_regression.pkl"
+    params:
+      ROOT: "{{ ROOT }}"
+      DATA: "{{ DATA }}"
+      INTERIM_DATA: "{{ INTERIM_DATA }}"
+      VERSION: "{{ VERSION }}"
+
+  - name: train_random_forest
+    source: notebooks/04_02_model_random_forest.ipynb
+    product:
+      nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/04_02_model_random_forest.ipynb"
+      random_forest_model: "{{ MODELS_PATH }}/random_forest.pkl"
+    params:
+      ROOT: "{{ ROOT }}"
+      DATA: "{{ DATA }}"
+      INTERIM_DATA: "{{ INTERIM_DATA }}"
+      VERSION: "{{ VERSION }}"
+
+  - name: train_xgboost
+    source: notebooks/04_03_model_xgboost.ipynb
+    product:
+      nb: "{{ OUTPUT_NOTEBOOKS_PATH }}/04_03_model_xgboost.ipynb"
+      xgboost_model: "{{ MODELS_PATH }}/xgboost.json"
     params:
       ROOT: "{{ ROOT }}"
       DATA: "{{ DATA }}"
