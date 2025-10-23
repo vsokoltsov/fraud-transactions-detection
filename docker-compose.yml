@@ -61,19 +61,24 @@ services:
       - NB_GID=${NB_GID}
       - JUPYTER_TOKEN=${JUPYTER_TOKEN}
       - JUPYTER_ENABLE_LAB=yes
+      - PLOMBER_DISABLE_JUPYTER=1
     volumes:
       - ./notebooks:/app/notebooks
       - ./data:/app/data
+      - ./src:/app/src
     command:
       - uv
       - run
       - jupyter
       - lab
       - --ip=0.0.0.0
+      - --port=8888
       - --no-browser
       - --ServerApp.root_dir=/app/notebooks
       - --ServerApp.token=
       - --ServerApp.password=
       - --ServerApp.allow_origin=*
+      - --ServerApp.disable_check_xsrf=True
+      - --ServerApp.allow_root=True
     restart: unless-stopped
     
