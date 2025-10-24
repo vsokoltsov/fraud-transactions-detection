@@ -106,6 +106,7 @@ There are 3 options of running Jupyter Notebooks within `./notebooks` folder:
 
 #### 1. Manually create Jupyter Kernel
 
+* `pip install -e src/fraudlib` - install internal library with util functions
 * `make venv-on` - activates Python virtual environment
 * `make install-kernel` - creates Python kernel named `ml-tech-assignment` (`ML Tech Assignment` in editor)
 * `make set-kernel-in-notebooks` - Updates all Jupyter notebooks under `./notebooks` folder with kernel `ml-tech-assignment`
