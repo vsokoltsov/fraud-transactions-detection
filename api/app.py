@@ -2,13 +2,14 @@ from typing import cast, AsyncGenerator, Any
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel, PositiveFloat
-from .config import settings
+from .config import get_settings
 from .db.storage import Storage
 from api.predictor.fraud import FraudPredictor
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[Any, None]:
+    settings = get_settings()
     app.state.db = Storage(settings)
     app.state.model = FraudPredictor(settings=settings)
     yield

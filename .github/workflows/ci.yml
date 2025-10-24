@@ -55,6 +55,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: [lint]
+    env:
+      STORAGE: csv
+      MODEL: xgboost
+      VERSION: v2
+      STORAGE_PATH: ./data/transactions.csv
+      FEATURES_PATH: ./data/features_v2.yaml
+      MODELS_PATH: ./models
+      THRESHOLDS_PATH: ./data/models/thresholds.yaml
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
