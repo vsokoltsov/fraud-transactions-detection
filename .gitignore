@@ -13,3 +13,4 @@ htmlcov/
 notebooks/output/
 .Trash-1000/
 .virtual_documents/
+*.egg-info/
