@@ -1,5 +1,7 @@
 # Fraud transactions detection task
 
+[![CI](https://github.com/vsokoltsov/fraud-transactions-detection/actions/workflows/ci.yml/badge.svg)](https://github.com/vsokoltsov/fraud-transactions-detection/actions/workflows/ci.yml)
+
 ## Objective
 
 ### Context: card skimming
