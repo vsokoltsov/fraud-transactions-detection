@@ -125,10 +125,7 @@ def save_model_thresholds(filepath: str, thresholds: Dict[str, float]) -> None:
         pass
 
     for key, value in thresholds.items():
-        if key in data:
-            print(f"Key '{key}' is already in thresholds")
-        else:
-            data[key] = value
+        data[key] = value
 
     with open(filepath, "w", encoding="utf-8") as f:
         yaml.dump(data, f, allow_unicode=True, sort_keys=False)
