@@ -29,6 +29,23 @@ def cm_for_threshold(
     y_pred_opt = (y_pred_proba >= thr).astype(int)
     return confusion_matrix(y_test, y_pred_opt)
 
+def matrix_params(
+    matrix: npt.NDArray[np.float64],
+) -> Dict[str, float]:
+    precision_ = matrix[1][1] / (matrix[1][1] + matrix[0][1])
+    recall_ = matrix[1][1] / (matrix[1][1] + matrix[1][0])
+    accuracy_ = (matrix[1][1] + matrix[0][0]) / np.sum(matrix)
+    false_positive_rate_ = matrix[0][1] / (matrix[0][1] + matrix[0][0])
+    false_negative_rate_ = matrix[1][0] / (matrix[1][0] + matrix[1][1])
+    return {
+        'precision': precision_,
+        'recall': recall_,
+        'accuracy': accuracy_,
+        'false_positive_rate': false_positive_rate_,
+        'false_negative_rate': false_negative_rate_
+    }
+
+
 def explain_confusion_matrix(
     matrix: npt.NDArray[np.float64],
     thr: List[float]
