@@ -87,7 +87,7 @@ Therefore, here is the order of notebook execution:
    1. [V1](./notebooks/03_02_feature_eng_v1.ipynb)
    2. [V2](./notebooks/03_02_feature_eng_v2.ipynb)
 5. Model training
-   1. [Linear Regression](./notebooks/04_01_model_logreg.ipynb)
+   1. [Logistic Regression](./notebooks/04_01_model_logreg.ipynb)
    2. [Random Forest](./notebooks/04_02_model_random_forest.ipynb)
    3. [XGBoost](./notebooks/04_03_model_xgboost.ipynb)
 
