@@ -39,3 +39,7 @@ venv_on:
 
 venv_off:
 	source .venv/bin/deactivate
+
+mlflow-import:
+	MLFLOW_TRACKING_URI="file:./data/mlflow" export-experiment --experiment $(experiment) --output-dir ./data/mlflow_exported/$(experiment)
+	MLFLOW_TRACKING_URI="http://localhost:5500" import-experiment --experiment-name $(experiment) --input-dir ./data/mlflow_exported/$(experiment)
