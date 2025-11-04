@@ -69,8 +69,11 @@ exploratory data analysis and the modeling phase.
 For this task, three models were evaluated:
 
 * [Logistic Regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
+  * [Model outputs](./models_description/logistic_regression.md)
 * [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
+  * [Model outputs](./models_description/random_forest.md)
 * [XGBoost](https://xgboost.ai/)
+  * [Model outputs](./models_description/xgboost.md)
 
 ### Notebooks
 
