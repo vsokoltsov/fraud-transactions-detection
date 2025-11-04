@@ -64,6 +64,14 @@ exploratory data analysis and the modeling phase.
 
 ## Implementation
 
+### Features
+
+* [] Separate notebooks for each step
+* [] [FastAPI](https://fastapi.tiangolo.com/) server for model
+* [] MLFlow integration
+* [] Store transaction data in PostgreSQL
+* [] Store and calculate feature information in ClickHouse
+
 ### ML Models
 
 For this task, three models were evaluated:
