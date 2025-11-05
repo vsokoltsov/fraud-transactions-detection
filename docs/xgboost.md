@@ -10,7 +10,7 @@
 
 ## Confusion matrix (init)
 
-For the threshold 0.1:
+For the threshold `0.1`:
 * Precision: 0.138 (Among all of the transactions, `~13.814%` are fraud)
 * Recall: 0.776 (Model found `~77.577%` fraud transactions)
 * Accuracy: 0.984 (Overall accuracy of the model)
