@@ -1,6 +1,8 @@
-.venv/
+It d.venv/
 data/interim
 data/models
+data/mlflow
+data/mlflow_exported
 __pycache__/
 .DS_Store
 .env
