@@ -2,6 +2,10 @@
 
 [![CI](https://github.com/vsokoltsov/fraud-transactions-detection/actions/workflows/ci.yml/badge.svg)](https://github.com/vsokoltsov/fraud-transactions-detection/actions/workflows/ci.yml)
 
+## Project template (sort of)
+
+* [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/)
+
 ## Objective
 
 ### Context: Card Skimming
@@ -66,9 +70,9 @@ exploratory data analysis and the modeling phase.
 
 ### Features
 
-* [] Separate notebooks for each step
-* [] [FastAPI](https://fastapi.tiangolo.com/) server for model
-* [] MLFlow integration
+* [x] Separate notebooks for each step
+* [x] [FastAPI](https://fastapi.tiangolo.com/) server for model
+* [x] MLFlow integration
 * [] Store transaction data in PostgreSQL
 * [] Store and calculate feature information in ClickHouse
 
@@ -77,11 +81,11 @@ exploratory data analysis and the modeling phase.
 For this task, three models were evaluated:
 
 * [Logistic Regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
-  * [Model outputs](./models_description/logistic_regression.md)
+  * [Model outputs](./docs/logistic_regression.md)
 * [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
-  * [Model outputs](./models_description/random_forest.md)
+  * [Model outputs](./docs/random_forest.md)
 * [XGBoost](https://xgboost.ai/)
-  * [Model outputs](./models_description/xgboost.md)
+  * [Model outputs](./docs/xgboost.md)
 
 ### Notebooks
 
@@ -132,10 +136,36 @@ There are three options for running Jupyter Notebooks within the `./notebooks` f
 
 #### 3. Ploomber
 
-![pipeline](./pipeline.png)
+![pipeline](./reports/figures/pipeline.png)
 
 * `make ploomber` — this performs:
   * `make venv-on`
   * `make install-kernel`
   * `make set-kernel-in-notebooks`
   * `ploomber build` — runs the whole pipeline
+
+## [MLFlow](https://mlflow.org/)
+
+### Visual
+
+#### Logistic regression
+
+![](./reports//figures/mlflow_logreg.png)
+
+#### Random Forest
+
+![](./reports//figures/mlflow_random_forest.png)
+
+#### XGBoost
+
+![](./reports//figures/mlflow_xgboost.png)
+
+### Overview
+
+* By default, all the data is located on local machine, under `./data/mlflow` folder
+* It is possible to run mlflow via `make mlflow-up`
+* When server is running, set `MLFLOW_URI` environment variable - it will use server url for tracking experiments and models
+* In case if notebooks' runs were performed without server, it is possible to import data via:
+  * `make mlflow-import-experiment experiment={experiment name}`: imports particular experiment to MLFlow server
+  * `mlflow-export-models-all`: exports all the local models
+  * `make mlflow-import-model experiment={experiment name} model={model name}`: imports `{model}` from `{experiment}` to server
