@@ -26,6 +26,7 @@ api = [
 
 dev = [
     "black>=25.9.0",
+    "click>=8.3.0",
     "httpx>=0.28.1",
     "mypy>=1.18.2",
     "nbformat>=5.10.4",
