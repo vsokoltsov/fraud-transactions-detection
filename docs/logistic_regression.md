@@ -2,19 +2,19 @@
 
 ## Precision-recall curve (init)
 
-![curve_init](../data/plots/logreg_precision_recall_curve_init.png)
+![curve_init](../reports/figures/logreg_precision_recall_curve_init.png)
 
 ## Precision-recall curve with thresholds (init)
 
-![curve_thresholds_init](../data//plots/logreg_precision_recall_curve_with_thrs_init.png)
+![curve_thresholds_init](../reports/figures/logreg_precision_recall_curve_with_thrs_init.png)
 
 ## Precision-recall curve (best params)
 
-![curve_best](../data/plots/logreg_precision_recall_curve_best.png)
+![curve_best](../reports/figures/logreg_precision_recall_curve_best.png)
 
 ## Precision-recall curve with thresholds (best)
 
-![curve_thresholds_best](../data/plots/logreg_precision_recall_curve_with_thrs_best.png)
+![curve_thresholds_best](../reports/figures/logreg_precision_recall_curve_with_thrs_best.png)
 
 ## Confusion matrix
 
@@ -25,4 +25,4 @@ For the threshold 0.79:
 * False blocks of transactions: `~10.567%`
 * Missed `~8.705%` of fraud transactions
 
-![conf_matrix](../data/plots/logreg_confusion_matrix_best.png)
+![conf_matrix](../reports/figures/logreg_confusion_matrix_best.png)
